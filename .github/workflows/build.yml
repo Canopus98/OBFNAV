@@ -8,10 +8,20 @@ on:
 
 jobs:
   build:
-    # Pinned image: ships with the Android SDK preinstalled (no setup-android step needed).
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+
+      - name: Extract project zip (only if the project was uploaded as .zip)
+        run: |
+          if [ ! -d app ]; then
+            Z=$(ls *.zip | head -1)
+            echo "Extracting $Z"
+            unzip -q -o "$Z" -d _src
+            ROOT=$(dirname "$(find _src -name settings.gradle | head -1)")
+            cp -r "$ROOT"/. .
+          fi
+          ls
 
       - uses: actions/setup-java@v5
         with:
